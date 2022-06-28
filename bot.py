@@ -9,6 +9,7 @@ import aiohttp
 import discord
 import random
 import datetime
+from itertools import cycle
 from discord.ext import commands
 from discord.ext.commands import ExtensionFailed, ExtensionNotFound, NoEntryPointError
 from dotenv import load_dotenv
@@ -51,24 +52,47 @@ class ValorantBot(commands.Bot):
     def owner(self) -> discord.User:
         return self.bot_app_info.owner
     
-    async def on_ready(self) -> None:
-        await self.tree.sync()
-        print(f"\nLogged in as: {self.user}\n\n BOT IS READY !")
-        print(f"Version: {self.bot_version}")
+status = cycle ([
+    "4ly don't be afraid ❤️",
+    "listening to 4ly's heart ❤️",
+    "watching my beautiful 4ly ❤️",
+    "I Love My Girlfriend",
+    "ILY 4ly ❤️",
+    "4ly, i never wanna lose you"
+    "4ly you're cute!"
+])
+
+listening = discord.ActivityType.listening
+
+@tasks.loop(seconds=30)
+async def status_swap():
+    await client.change_presence(status=discord.Status.idle, activity=discord.Game(next(status)))
+
+@client.event
+async def on_ready():
+    status_swap.start()
+    print('Connected to bot: {}'.format(client.user.name))
+    print('Bot ID: {}'.format(client.user.id))
+    print('x4ybot is online')
+    
+    #async def on_ready(self) -> None:
+       # await self.tree.sync()
+       # print(f"\nLogged in as: {self.user}\n\n BOT IS READY !")
+       # print(f"Version: {self.bot_version}")
         
         # bot presence
-        activity_type = discord.ActivityType.listening
-        status_idle = discord.Status.idle
-        await self.change_presence(status=discord.Status(type=status_idle), activity=discord.Activity(type=activity_type, name="4ly's heart ❤️")) #original (╯•﹏•╰)
-        await asyncio.sleep(5)
+        #activity_type = discord.ActivityType.listening
+        #status_idle = discord.Status.idle
+        #await self.change_presence(status=discord.Status(type=status_idle), activity=discord.Activity(type=activity_type, name="4ly's heart ❤️")) #original (╯•﹏•╰)
+        #await asyncio.sleep(5)
 
-        status_dnd = discord.Status.do_not_disturb
-        await self.change_presence(status=discord.Status(type=status_dnd), activity=discord.Activity(type=activity_type, name="my beautiful 4ly ❤️")) #original (╯•﹏•╰)
-        await asyncio.sleep(5)
+        #status_dnd = discord.Status.do_not_disturb
+        #await self.change_presence(status=discord.Status(type=status_dnd), activity=discord.Activity(type=activity_type, name="my beautiful 4ly ❤️")) #original (╯•﹏•╰)
+        #await asyncio.sleep(5)
 
-        status_invis = discord.Status.invisible
-        await self.change_presence(status=discord.Status(type=status_invis), activity=discord.Game("I Love You 4ly ❤️")) #original (╯•﹏•╰)
-        await asyncio.sleep(5)
+        #status_invis = discord.Status.invisible
+        #await self.change_presence(status=discord.Status(type=status_invis), activity=discord.Game("I Love You 4ly ❤️")) #original (╯•﹏•╰)
+        #await asyncio.sleep(5)
 
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
